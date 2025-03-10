@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 public class Enemies : MonoBehaviour
@@ -10,6 +9,7 @@ public class Enemies : MonoBehaviour
     [SerializeField] private int columns;
     [SerializeField] Invaders[] prefabs = new Invaders[5];
     private Vector3 direction = Vector3.right;
+    [SerializeField] private float speed = 1f;
     private Vector3 initialPosition;
     public Projectile missilePrefab;
     public float missileSpawnRate = 1f;
@@ -82,8 +82,12 @@ public class Enemies : MonoBehaviour
         int amountAlive = GetAliveCount();
         int amountKilled = totalCount - amountAlive;
         float percentKilled = amountKilled / (float)totalCount;
+
+        transform.position += speed * Time.deltaTime * direction;
         // Transform the viewport to world coordinates so we can check when the
         // invaders reach the edge of the screen
+
+
         Vector3 leftEdge = Camera.main.ViewportToWorldPoint(Vector3.zero);
         Vector3 rightEdge = Camera.main.ViewportToWorldPoint(Vector3.right);
 

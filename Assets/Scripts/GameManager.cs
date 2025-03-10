@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     private Player player;
     private Enemies invaders;
     private MysteryShip mysteryShip;
+    
 
     public int score { get; private set; } = 0;
     public int lives { get; private set; } = 3;
@@ -54,7 +55,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void NewGame()
+    public void NewGame()
     {
         gameOverUI.SetActive(false);
 
@@ -86,8 +87,19 @@ public class GameManager : MonoBehaviour
 
     private void SetScore(int score)
     {
+        Debug.Log("SetScore llamado con score: " + score);
         this.score = score;
         scoreText.text = score.ToString().PadLeft(4, '0');
+        int highScore = PlayerPrefs.GetInt("HighScore", 0);
+        Highscore.SetAmount(highScore);
+        Debug.Log("Puntaje más alto actual: " + highScore);
+        if (score > highScore)
+        {
+            Debug.Log("Nuevo puntaje más alto detectado: " + score);
+            PlayerPrefs.SetInt("HighScore", score);
+            PlayerPrefs.Save(); 
+            AuthenticationManager.Instance.GetScore(score);
+        }
     }
 
     private void SetLives(int lives)
@@ -123,7 +135,10 @@ public class GameManager : MonoBehaviour
             NewRound();
         }
     }
-
+    public void GoHome()
+    {
+        SceneManager.LoadScene(0);
+    }
     public void OnMysteryShipKilled(MysteryShip mysteryShip)
     {
         SetScore(score + mysteryShip.score);
