@@ -67,6 +67,7 @@ public class AuthenticationManager : MonoBehaviour
                 case 200: // Registro exitoso
                     Debug.Log("Registro exitoso");
                     StartCoroutine(LoginPost(postDataJson));
+                    PlayerPrefs.DeleteKey("HighscoreAmount");
                     break;
 
                 case 400: // Solicitud incorrecta
@@ -119,6 +120,7 @@ public class AuthenticationManager : MonoBehaviour
                     PlayerPrefs.SetString("token", Token);
                     PlayerPrefs.SetString("username", Username);
                     PlayerPrefs.Save();
+                    CheckAuthentication();
                     loginPanel.SetActive(false);
                     startPanel.SetActive(true);
                     Debug.Log("Login exitoso");
