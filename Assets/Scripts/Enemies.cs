@@ -9,7 +9,10 @@ public class Enemies : MonoBehaviour
     [SerializeField] private int columns;
     [SerializeField] Invaders[] prefabs = new Invaders[5];
     private Vector3 direction = Vector3.right;
-    [SerializeField] private float speed = 1f;
+    [SerializeField] private float initialSpeed = 2f; // Initial speed of the invaders
+    [SerializeField] private float speedIncreaseAmount = 0.3f; // Amount to increase speed by
+    [SerializeField] private float maxSpeed = 5f;
+    private float currentSpeed;
     private Vector3 initialPosition;
     public Projectile missilePrefab;
     public float missileSpawnRate = 1f;
@@ -18,7 +21,7 @@ public class Enemies : MonoBehaviour
     {
         for (int i = 0; i < rows; i++)
         {
-            float width = 2f * (columns - 1);
+            float width = 3f * (columns - 1);
             float height = 2f * (rows - 1);
 
             Vector2 centerOffset = new Vector2(-width * 0.5f, -height * 0.5f);
@@ -31,7 +34,7 @@ public class Enemies : MonoBehaviour
 
                 // Calculate and set the position of the invader in the row
                 Vector3 position = rowPosition;
-                position.x += 2f * j;
+                position.x += 3f * j;
                 invader.transform.localPosition = position;
             }
         }
@@ -39,7 +42,7 @@ public class Enemies : MonoBehaviour
     private void Awake()
     {
         initialPosition = transform.position;
-
+        currentSpeed = initialSpeed;
         CreateInvaderGrid();
     }
     private void Start()
@@ -83,7 +86,7 @@ public class Enemies : MonoBehaviour
         int amountKilled = totalCount - amountAlive;
         float percentKilled = amountKilled / (float)totalCount;
 
-        transform.position += speed * Time.deltaTime * direction;
+        transform.position += currentSpeed * Time.deltaTime * direction;
         // Transform the viewport to world coordinates so we can check when the
         // invaders reach the edge of the screen
 
@@ -124,12 +127,17 @@ public class Enemies : MonoBehaviour
         position.y -= 1f;
         transform.position = position;
     }
+    private void IncreaseSpeed()
+    {
+        // Increase speed by the specified amount, but don't exceed the max speed
+        currentSpeed = Mathf.Min(currentSpeed + speedIncreaseAmount, maxSpeed);
+    }
 
     public void ResetInvaders()
     {
         direction = Vector3.right;
         transform.position = initialPosition;
-
+        currentSpeed = initialSpeed;
         foreach (Transform invader in transform)
         {
             invader.gameObject.SetActive(true);

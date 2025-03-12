@@ -28,6 +28,6 @@ public class Highscore : MonoBehaviour
     }
     private static void DisplayAmount()
     {
-        highscoreText.text = amount.ToString();
+        highscoreText.text = "Highest score achieved: " + amount.ToString();
     }
 }
